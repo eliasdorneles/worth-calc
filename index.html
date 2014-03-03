@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Help me save!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.2.min.css">
+    <style>
+        .thing-price {
+            font-weight: bold;
+        }
+        .thing-setting .buttons {
+            float: right;
+        }
+    </style>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/jquery.mobile-1.4.2.min.js"></script>
+    <script src="js/handlebars-v1.3.0.js"></script>
+
+    <!-- templates -->
+    <script id="thing-setting" type="text/x-handlebars-template">
+        <li class="thing-setting">
+        {{ thing.description }} <span class="thing-price">$<span>{{ thing.price }}</span></span>
+        <span class="buttons">
+        <a href="#" class="ui-btn ui-btn-inline ui-icon-edit ui-btn-icon-left ui-corner-all">Edit</a>
+        <a href="#" class="ui-btn ui-btn-b ui-btn-inline ui-icon-delete ui-btn-icon-left ui-corner-all">Remove</a>
+        </span>
+        </li>
+    </script>
+
+    <script>
+        function compileTemplate(path) {
+            return Handlebars.compile($(path).html());
+        }
+        $(function() {
+            var $ulFavThings = $('.favorite-things');
+            var templateForItemSetting = compileTemplate('#thing-setting');
+
+            var myFavoriteThings = [
+                {description: "Coffee",            price: 4.0},
+                {description: "Go to the movies",  price: 18.0},
+                {description: "Ice-cream",         price: 8.0},
+                {description: "Beer",              price: 6.0},
+                {description: "New Book",          price: 20.0},
+                {description: "Trip to Rio",       price: 3000.0},
+            ];
+
+            function getFavoriteThings() {
+                // TODO: sync with localStorage
+                if ($ulFavThings.data('things') === undefined) {
+                    $ulFavThings.data('things', myFavoriteThings);
+                }
+                return $ulFavThings.data('things');
+            }
+            function updateSettingsPage() {
+                var thingsList = getFavoriteThings();
+                $ulFavThings.empty();
+                $.each(thingsList, function(index, it) {
+                    $ulFavThings.append(templateForItemSetting({thing: it}));
+                });
+            }
+            updateSettingsPage();
+        });
+    </script>
+</head>
+<body>
+    <div id="home" data-role="page">
+        <div data-role="header">
+            <h1>Help Me Save!</h1>
+            <a href="#settings" data-icon="gear" class="ui-btn-right">Settings</a>
+        </div>
+        <div class="ui-content" role="main">
+            Okay, tell me what you want to buy...
+        </div>
+        <div data-role="footer">
+            <h4>Footer Main Page</h4>
+        </div>
+    </div>
+    <div id="settings" data-role="page">
+        <div data-role="header">
+            <a href="#home" data-icon="home" class="ui-btn-left">Back</a>
+            <h1>Settings</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <ul data-role="listview" class="favorite-things"></ul>
+        </div>
+        <div data-role="footer">
+            <h4>Footer Settings</h4>
+        </div>
+    </div>
+</body>
+</html>
