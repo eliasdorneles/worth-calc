@@ -32,6 +32,11 @@
         </span>
         </li>
     </script>
+    <script id="thing-assessment" type="text/x-handlebars-template">
+        <li class="thing-assessment" data-index="{{ index }}">
+            <em>{{ ratio }}</em> units of {{ thing.description }} 
+        </li>
+    </script>
 
     <script>
         function compileTemplate(path) {
@@ -40,14 +45,15 @@
         $(function() {
             var $ulFavThings = $('.favorite-things');
             var templateForItemSetting = compileTemplate('#thing-setting');
+            var templateForAssessment = compileTemplate('#thing-assessment');
 
             var DEFAULT_FAVORITE_THINGS = [
-                {description: "Coffee",            price: 4.0},
-                {description: "Go to the movies",  price: 18.0},
-                {description: "Ice-cream",         price: 8.0},
-                {description: "Beer",              price: 6.0},
-                {description: "New Book",          price: 20.0},
-                {description: "Trip to Rio",       price: 3000.0},
+                {description: "starbucks coffee",  price: 4.0},
+                {description: "movie-going",       price: 18.0},
+                {description: "an ice-cream pot",     price: 8.0},
+                {description: "a bottle of beer",    price: 6.0},
+                {description: "a new book",          price: 20.0},
+                {description: "a trip to Rio",       price: 3000.0},
             ];
 
             function getFavoriteThings() {
@@ -66,9 +72,21 @@
             }
             function assessIt() {
                 var price = $('.price').val();
-                var $container = $('.assess-container');
-                // TODO: validate price, calculate costs, and show in $container.html
-                $container.html('Assessing it!');
+                var $container = $('ul.assess-container');
+                // TODO: validate price
+                $('.worth-title').html('$' + price + ' can buy you:');
+                $container.empty();
+                $.each(getFavoriteThings(), function(index, it) {
+                    var ratio = price / it.price;
+                    if (ratio > 1) {
+                        $container.append(templateForAssessment({
+                            thing: it,
+                            price: price,
+                            ratio: ratio.toFixed(2)
+                        }));
+                    }
+                });
+                $container.listview('refresh');
             }
 
             // initializing app
@@ -107,7 +125,8 @@
             <h1>Estimate worth</h1>
         </div>
         <div class="ui-content" role="main">
-            <div class="assess-container"></div>
+            <h3 class="worth-title">Estimated worth</h3>
+            <ul data-role="listview" class="assess-container"></ul>
         </div>
         <div data-role="footer">
             <a href="#home" data-icon="home" class="ui-btn-left">Back</a>
