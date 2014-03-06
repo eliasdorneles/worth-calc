@@ -9,8 +9,14 @@
         .thing-price {
             font-weight: bold;
         }
+        .thing-setting {
+            font-size: 1.3em;
+        }
         .thing-setting .buttons {
             float: right;
+        }
+        input[type=number] {
+            text-align: right;
         }
     </style>
     <script src="js/jquery-1.11.0.min.js"></script>
@@ -19,11 +25,10 @@
 
     <!-- templates -->
     <script id="thing-setting" type="text/x-handlebars-template">
-        <li class="thing-setting">
+        <li class="thing-setting" data-index="{{ index }}">
         {{ thing.description }} <span class="thing-price">$<span>{{ thing.price }}</span></span>
         <span class="buttons">
-        <a href="#" class="ui-btn ui-btn-inline ui-icon-edit ui-btn-icon-left ui-corner-all">Edit</a>
-        <a href="#" class="ui-btn ui-btn-b ui-btn-inline ui-icon-delete ui-btn-icon-left ui-corner-all">Remove</a>
+        <a href="#" class="ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-corner-all">Edit</a>
         </span>
         </li>
     </script>
@@ -36,7 +41,7 @@
             var $ulFavThings = $('.favorite-things');
             var templateForItemSetting = compileTemplate('#thing-setting');
 
-            var myFavoriteThings = [
+            var DEFAULT_FAVORITE_THINGS = [
                 {description: "Coffee",            price: 4.0},
                 {description: "Go to the movies",  price: 18.0},
                 {description: "Ice-cream",         price: 8.0},
@@ -47,19 +52,31 @@
 
             function getFavoriteThings() {
                 // TODO: sync with localStorage
-                if ($ulFavThings.data('things') === undefined) {
-                    $ulFavThings.data('things', myFavoriteThings);
-                }
                 return $ulFavThings.data('things');
             }
+            function setFavoriteThings(things) {
+                // TODO: sync with localStorage
+                $ulFavThings.data('things', things);
+            }
             function updateSettingsPage() {
-                var thingsList = getFavoriteThings();
                 $ulFavThings.empty();
-                $.each(thingsList, function(index, it) {
+                $.each(getFavoriteThings(), function(index, it) {
                     $ulFavThings.append(templateForItemSetting({thing: it}));
                 });
             }
+            function assessIt() {
+                var price = $('.price').val();
+                var $container = $('.assess-container');
+                // TODO: validate price, calculate costs, and show in $container.html
+                $container.html('Assessing it!');
+            }
+
+            // initializing app
+            if (getFavoriteThings() === undefined) {
+                setFavoriteThings(DEFAULT_FAVORITE_THINGS);
+            }
             updateSettingsPage();
+            $('.assess-it-btn').click(assessIt);
         });
     </script>
 </head>
@@ -71,9 +88,8 @@
         </div>
         <div class="ui-content" role="main">
             Okay, tell me what you want to buy...
-        </div>
-        <div data-role="footer">
-            <h4>Footer Main Page</h4>
+            <input type="number" id="price" class="price" placeholder="$ 10.00" />
+            <a href="#assess" data-icon="home" class="ui-btn assess-it-btn">Calculate worth</a>
         </div>
     </div>
     <div id="settings" data-role="page">
@@ -84,9 +100,19 @@
         <div role="main" class="ui-content">
             <ul data-role="listview" class="favorite-things"></ul>
         </div>
+    </div>
+    <div id="assess" data-role="page">
+        <div data-role="header">
+            <a href="#home" data-icon="home" class="ui-btn-left">Back</a>
+            <h1>Estimate worth</h1>
+        </div>
+        <div class="ui-content" role="main">
+            <div class="assess-container"></div>
+        </div>
         <div data-role="footer">
-            <h4>Footer Settings</h4>
+            <a href="#home" data-icon="home" class="ui-btn-left">Back</a>
         </div>
     </div>
+    <!-- TODO: popup pra editar thing -->
 </body>
 </html>
