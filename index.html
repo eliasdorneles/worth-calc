@@ -31,7 +31,7 @@
         <li class="thing-setting" data-index="{{ index }}">
         {{ thing.description }} <span class="thing-price">$<span>{{ thing.price }}</span></span>
         <span class="buttons">
-        <a href="#" class="ui-btn ui-btn-b ui-icon-edit ui-btn-icon-left ui-corner-all">Edit</a>
+        <a href="#" class="ui-btn ui-icon-edit ui-btn-icon-left ui-corner-all">Edit</a>
         </span>
         </li>
     </script>
@@ -57,7 +57,7 @@
         <div data-role="header">
             <a href="#home" data-icon="home" class="ui-btn-left">Back</a>
             <h1>Settings</h1>
-            <a href="#edit-thing" data-rel="popup" data-icon="plus" class="ui-btn-right">Add</a>
+            <a class="add-thing-btn" href="#edit-thing" data-rel="popup" data-icon="plus" class="ui-btn-right">Add</a>
         </div>
         <div role="main" class="ui-content">
             <h2>My Favorite Things</h2>
@@ -72,7 +72,8 @@
                     <label for="thing-price">... costs about</label>
                     <input type="number" id="thing-price" name="price" />
                     <input type="hidden" id="thing-index" name="index" />
-                    <button class="save-thing">Save</button>
+                    <button class="save-thing-btn" data-icon="check">Save</button>
+                    <button class="delete-thing-btn" data-icon="delete" data-theme="b">Delete</button>
                 </div>
             </form>
         </div>

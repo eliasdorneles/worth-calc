@@ -23,7 +23,7 @@ $(document).on('ready', function() {
         // TODO: sync with localStorage
         $ulFavThings.data('things', things);
     }
-    function updateSettingsPage() {
+    function updateSettingsListView() {
         $ulFavThings.empty();
         $.each(getFavoriteThings(), function(index, it) {
             $ulFavThings.append(templateForItemSetting({
@@ -63,39 +63,58 @@ $(document).on('ready', function() {
         });
         return params;
     }
-    function updateThings(index, thing) {
+    function isValidIndex(index) {
+        return parseInt(index) && parseInt(index) >= 0;
+    }
+    function insertThingAt(index, thing) {
         var things = getFavoriteThings();
-        if (parseInt(index) && parseInt(index) >= 0) {
+        if (isValidIndex(index)) {
             things[index] = thing;
         } else {
             things.push(thing);
         }
         setFavoriteThings(things);
     }
-    function saveThing() {
-        var data = getFormData($('.form-edit-thing'));
-        // TODO: add basic validation
-        var index = data.index;
-        updateThings(index, {description: data.description, price: data.price});
-        updateSettingsPage();
+    function removeThingAt(index) {
+        var things = getFavoriteThings();
+        things.splice(index, 1);
+        setFavoriteThings(things);
+    }
+    function deleteThing() {
+        var index = getFormData($('.form-edit-thing')).index;
+        if (isValidIndex(index)) {
+            removeThingAt(index);
+        }
+        updateSettingsListView();
         $('#edit-thing').popup('close');
         clearPopupData();
         return false;
     }
-    function loadPopupData(item, index) {
+    function saveThing() {
+        var data = getFormData($('.form-edit-thing'));
+        // TODO: add basic validation
+        var index = data.index;
+        insertThingAt(index, {description: data.description, price: data.price});
+        updateSettingsListView();
+        $('#edit-thing').popup('close');
+        clearPopupData();
+        return false;
+    }
+    function populatePopupEditForm(item, index) {
         var popup = $('#edit-thing');
         popup.find('#thing-description').val(item.description);
         popup.find('#thing-price').val(item.price);
         popup.find('#thing-index').val(index);
+        popup.find('.delete-thing-btn').toggle(isValidIndex(index));
     }
     function clearPopupData() {
-        loadPopupData({description: undefined, price: undefined}, -1);
+        populatePopupEditForm({description: undefined, price: undefined}, -1);
     }
     function loadPopupEdit() {
         var index = $(this).data('index');
         var item = getFavoriteThings()[index];
         var popup = $('#edit-thing');
-        loadPopupData(item, index);
+        populatePopupEditForm(item, index);
         popup.popup('open');
     }
 
@@ -103,9 +122,11 @@ $(document).on('ready', function() {
     if (getFavoriteThings() === undefined) {
         setFavoriteThings(DEFAULT_FAVORITE_THINGS);
     }
-    updateSettingsPage();
-    $('.assess-it-btn').click(calculateWorth);
+    updateSettingsListView();
+    $('body').on('click', '.assess-it-btn', calculateWorth);
+    $('body').on('click', '.add-thing-btn', clearPopupData);
+    $('body').on('click', '.save-thing-btn', saveThing);
+    $('body').on('click', '.delete-thing-btn', deleteThing);
     $('body').on('click', 'ul.favorite-things li', loadPopupEdit);
-    $('body').on('click', '.save-thing', saveThing);
 });
 
