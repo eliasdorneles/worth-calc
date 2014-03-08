@@ -71,7 +71,7 @@ $(document).on('ready', function() {
         if (isValidIndex(index)) {
             things[index] = thing;
         } else {
-            things.push(thing);
+            things.unshift(thing);
         }
         setFavoriteThings(things);
     }
