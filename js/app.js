@@ -128,5 +128,6 @@ $(document).on('ready', function() {
     $('body').on('click', '.save-thing-btn', saveThing);
     $('body').on('click', '.delete-thing-btn', deleteThing);
     $('body').on('click', 'ul.favorite-things li', loadPopupEdit);
+    $('body').on('taphold', 'ul.favorite-things li', loadPopupEdit);
 });
 
